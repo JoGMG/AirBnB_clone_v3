@@ -1,0 +1,6 @@
+versions/
+file.json
+__pycache__/
+web_flask/101-hbnb.py
+web_flask/templates/101-hbnb.html
+web_flask/static/styles/103*
