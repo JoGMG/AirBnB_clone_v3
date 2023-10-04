@@ -116,9 +116,17 @@ class TestFileStorage(unittest.TestCase):
     
     @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
     def test_get(self):
-        """Test for get that returns an instance"""
+        """Test for get that returns an instance object of Filestorage.__objects"""
         storage = FileStorage()
         test_dict = storage.all().values()
-        self.assertTrue(type(test_dict), dict)
-        self.assertTrue(test_dict.id, storage._FileStorage__objects.values().id)
+        self.assertIs(type(test_dict), dict)
+        self.assertEqual(test_dict.id, storage._FileStorage__objects.values().id)
         self.assertEqual(test_dict, storage._FileStorage__objects.values())
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_count(self):
+        """Test for count that returns an the number of instances of Filestorage.__object"""
+        storage = FileStorage()
+        test_count = len(storage.all())
+        count = len(storage._FileStorage__objects)
+        self.assertEqual(test_count, count)
