@@ -37,6 +37,8 @@ def state(state_id):
         storage.save()
         return jsonify({}), 200
     elif request.method == 'PUT':
+        if state is None:
+            abort(404)
         post = request.get_json()
         if post is None:
             return jsonify({"error": "Not a JSON"}), 400
