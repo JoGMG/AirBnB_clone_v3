@@ -27,9 +27,10 @@ def city_places(city_id):
             return jsonify({"error": "Missing user_id"}), 400
         if 'name' not in post:
             return jsonify({"error": "Missing name"}), 400
-        user = storage.get(User, post.get('user_id'))
+        user = storage.get(User, post['user_id'])
         if user is None:
             abort(404)
+        post['city_id'] = city_id
         post_place = Place(**post)
         post_place.save()
         return jsonify(post_place.to_dict()), 201
