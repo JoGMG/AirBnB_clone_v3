@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" Index File """
+""" View for index file """
 from flask import jsonify
 from api.v1.views import app_views
 from models import storage
@@ -11,12 +11,12 @@ from models.amenity import Amenity
 from models.review import Review
 
 
-@app_views.route('/status')
+@app_views.route('/status', strict_slashes=False)
 def status():
     return jsonify({"status": "OK"})
 
 
-@app_views.route('/stats')
+@app_views.route('/stats', strict_slashes=False)
 def stats():
     amenities = storage.count(Amenity)
     cities = storage.count(City)
