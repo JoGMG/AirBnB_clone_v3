@@ -27,20 +27,16 @@ def states():
 @app_views.route('/states/<state_id>', strict_slashes=False,
                  methods=['GET', 'DELETE', 'PUT'])
 def state(state_id):
-    state = [value.to_dict() for value in storage.all(State).values()
-             if value.id == state_id]
+    state = storage.get(State, state_id)
     if request.method == 'GET':
-        if len(state) == 0:
+        if state is None:
             abort(404)
-        return jsonify(state[0])
+        return jsonify(state.to_dict())
     elif request.method == 'DELETE':
-        if len(state) == 0:
+        if state is None:
             abort(404)
         else:
-            state = storage.get(State, state_id)
-            for city in list(state.cities):
-                storage.delete(city)
-            storage.delete(state)
+            state.delete()
             storage.save()
             return jsonify({}), 200
     elif request.method == 'PUT':
@@ -51,7 +47,6 @@ def state(state_id):
             for key, value in post.items():
                 ignore = ['id', 'created_at', 'updated_at']
                 if key not in ignore:
-                    state = storage.get(State, state_id)
                     setattr(state, key, value)
                     storage.save()
             return jsonify(state.to_dict()), 200
