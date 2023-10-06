@@ -37,10 +37,8 @@ def state(state_id):
         if len(state) == 0:
             abort(404)
         else:
-            state = [value for value in storage.all(State)
-                     if storage.all(State)[value].id == state_id]
-            state = storage.all(State)[state[0]]
-            for city in state.cities:
+            state = storage.get(State, state_id)
+            for city in list(state.cities):
                 storage.delete(city)
             storage.delete(state)
             storage.save()
@@ -53,9 +51,7 @@ def state(state_id):
             for key, value in post.items():
                 ignore = ['id', 'created_at', 'updated_at']
                 if key not in ignore:
-                    state = [value for value in storage.all(State)
-                             if storage.all(State)[value].id == state_id]
-                    state = storage.all(State)[state[0]]
+                    state = storage.get(State, state_id)
                     setattr(state, key, value)
                     storage.save()
             return jsonify(state.to_dict()), 200
