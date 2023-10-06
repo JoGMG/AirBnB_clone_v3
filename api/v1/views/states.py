@@ -46,5 +46,5 @@ def state(state_id):
             ignore = ['id', 'created_at', 'updated_at']
             if key not in ignore:
                 setattr(state, key, value)
-                storage.save()
+        storage.save()
         return jsonify(state.to_dict()), 200

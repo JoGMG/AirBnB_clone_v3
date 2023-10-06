@@ -14,10 +14,8 @@ def state_cities(state_id):
     if request.method == 'GET':
         if state is None:
             abort(404)
-        cities = []
-        for city in state.cities:
-            cities.append(city.to_dict())
-            return jsonify(cities)
+        cities = [city.to_dict() for city in state.cities]
+        return jsonify(cities)
     elif request.method == 'POST':
         if state is None:
             abort(404)
@@ -56,5 +54,5 @@ def cities(city_id):
             ignore = ['id', 'created_at', 'updated_at']
             if key not in ignore:
                 setattr(city, key, value)
-                storage.save()
+        storage.save()
         return jsonify(city.to_dict()), 200
