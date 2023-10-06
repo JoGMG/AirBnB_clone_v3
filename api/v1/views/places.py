@@ -8,7 +8,8 @@ from models.user import User
 from models.place import Place
 
 
-@app_views.route('/cities/<city_id>/places', strict_slashes=False, methods=['GET', 'POST'])
+@app_views.route('/cities/<city_id>/places', strict_slashes=False,
+                 methods=['GET', 'POST'])
 def city_places(city_id):
     city = storage.get(City, city_id)
     if request.method == 'GET':
@@ -26,7 +27,7 @@ def city_places(city_id):
             return jsonify({"error": "Missing user_id"}), 400
         if 'name' not in post:
             return jsonify({"error": "Missing name"}), 400
-        user = storage.get(User, post['user_id'])
+        user = storage.get(User, post.get('user_id'))
         if user is None:
             abort(404)
         post_place = Place(**post)
