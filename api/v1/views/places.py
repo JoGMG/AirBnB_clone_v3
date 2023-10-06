@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" View for User objects """
+""" View for Places """
 from flask import jsonify, request, abort
 from api.v1.views import app_views
 from models import storage
