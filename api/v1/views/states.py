@@ -8,20 +8,18 @@ from models.state import State
 
 @app_views.route('/states', strict_slashes=False, methods=['GET', 'POST'])
 def states():
+    states = [value.to_dict() for value in storage.all(State).values()]
     if request.method == 'GET':
-        all_states = [value.to_dict() for value in storage.all(State).values()]
-        return jsonify(all_states)
+        return jsonify(states)
     elif request.method == 'POST':
         post = request.get_json()
         if post is None:
             return jsonify({"error": "Not a JSON"}), 400
-        else:
-            if 'name' not in post:
-                return jsonify({"error": "Missing name"}), 400
-            else:
-                post_state = State(**post)
-                post_state.save()
-                return jsonify(post_state.to_dict()), 201
+        if 'name' not in post:
+            return jsonify({"error": "Missing name"}), 400
+        post_state = State(**post)
+        post_state.save()
+        return jsonify(post_state.to_dict()), 201
 
 
 @app_views.route('/states/<state_id>', strict_slashes=False,
@@ -35,18 +33,16 @@ def state(state_id):
     elif request.method == 'DELETE':
         if state is None:
             abort(404)
-        else:
-            state.delete()
-            storage.save()
-            return jsonify({}), 200
+        state.delete()
+        storage.save()
+        return jsonify({}), 200
     elif request.method == 'PUT':
         post = request.get_json()
         if post is None:
             return jsonify({"error": "Not a JSON"}), 400
-        else:
-            for key, value in post.items():
-                ignore = ['id', 'created_at', 'updated_at']
-                if key not in ignore:
-                    setattr(state, key, value)
-                    storage.save()
-            return jsonify(state.to_dict()), 200
+        for key, value in post.items():
+            ignore = ['id', 'created_at', 'updated_at']
+            if key not in ignore:
+                setattr(state, key, value)
+                storage.save()
+        return jsonify(state.to_dict()), 200
