@@ -1,9 +1,7 @@
 #!/usr/bin/python3
 """ holds class User"""
-from typing import Any
 import models
 from models.base_model import BaseModel, Base
-from os import getenv
 import sqlalchemy
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
@@ -34,4 +32,4 @@ class User(BaseModel, Base):
         """ Secures user password """
         if name == "password":
             value = md5(value.encode()).hexdigest()
-        return super().__setattr__(name, value)
+        super().__setattr__(name, value)
