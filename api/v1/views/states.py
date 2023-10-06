@@ -24,9 +24,11 @@ def states():
                 return jsonify(post_state.to_dict()), 201
 
 
-@app_views.route('/states/<state_id>', strict_slashes=False, methods=['GET', 'DELETE', 'PUT'])
+@app_views.route('/states/<state_id>', strict_slashes=False,
+                 methods=['GET', 'DELETE', 'PUT'])
 def state(state_id):
-    state = [value.to_dict() for value in storage.all(State).values() if value.id == state_id]
+    state = [value.to_dict() for value in storage.all(State).values()
+             if value.id == state_id]
     if request.method == 'GET':
         if len(state) == 0:
             abort(404)
@@ -35,10 +37,11 @@ def state(state_id):
         if len(state) == 0:
             abort(404)
         else:
-            state = [value for value in storage.all(State) if storage.all(State)[value].id == state_id]
+            state = [value for value in storage.all(State)
+                     if storage.all(State)[value].id == state_id]
             state = storage.all(State)[state[0]]
             for city in state.cities:
-                storage.delete(city) 
+                storage.delete(city)
             storage.delete(state)
             storage.save()
             return jsonify({}), 200
@@ -50,7 +53,8 @@ def state(state_id):
             for key, value in post.items():
                 ignore = ['id', 'created_at', 'updated_at']
                 if key not in ignore:
-                    state = [value for value in storage.all(State) if storage.all(State)[value].id == state_id]
+                    state = [value for value in storage.all(State)
+                             if storage.all(State)[value].id == state_id]
                     state = storage.all(State)[state[0]]
                     setattr(state, key, value)
                     storage.save()
