@@ -72,9 +72,9 @@ def search_places():
     state_ids = post.get('states', None)
     city_ids = post.get('cities', None)
     amenity_ids = post.get('amenities', None)
-    if not isinstance(post, dict):
-        return jsonify({"error": "Not a JSON"}), 400
     if post is None:
+        return jsonify({"error": "Not a JSON"}), 400
+    if not post:
         places = [value.to_dict() for value in storage.all(Place).values()]
         return jsonify(places)
     if state_ids is None and city_ids is None:
