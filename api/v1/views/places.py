@@ -74,14 +74,15 @@ def search_places():
     amenity_ids = post.get('amenities', None)
     if post is None:
         return jsonify({"error": "Not a JSON"}), 400
-    if not post:
+    if state_ids is None and city_ids is None and amenity_ids is None:
         places = [value.to_dict() for value in storage.all(Place).values()]
         return jsonify(places)
     if state_ids is None and city_ids is None:
         places = [value for value in storage.all(Place).values()]
-        for place in places:
-            if place.id not in amenity_ids:
-                places.remove(place)
+        for ids in amenity_ids:
+            for place in places:
+                if ids != place.id:
+                    places.remove(place)
         re_places = []
         for place in places:
             re_places.append(place.to_dict())
@@ -104,9 +105,10 @@ def search_places():
                         if place not in places:
                             places.append(place)
         if amenity_ids is not None:
-            for place in places:
-                if place.id not in amenity_ids:
-                    places.remove(place)
+            for ids in amenity_ids:
+                for place in places:
+                    if ids != place.id:
+                        places.remove(place)
         re_places = []
         for place in places:
             re_places.append(place.to_dict())
