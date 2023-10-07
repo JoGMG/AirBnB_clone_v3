@@ -83,11 +83,12 @@ def search_places():
         return jsonify(places)
     if state_ids is None and city_ids is None and amenity_ids is not None:
         places = []
-        for place in storage.all(Place).values():
-            for id in amenity_ids:
-                amenity = storage.get(Amenity, id)
-                if amenity in place.amenities and place not in places:
-                    places.append(place)
+        for ids in amenity_ids:
+            amenity = storage.get(Amenity, ids)
+            if amenity is not None:
+                for place in amenity.place_amenities:
+                    if place not in places:
+                        places.append(place)
         re_places = []
         for place in places:
             re_places.append(place.to_dict())
