@@ -89,7 +89,7 @@ def search_places():
             if amenity is not None:
                 for place in places:
                     if place in amenity.place_amenities:
-                        if place not in amenity_places:
+                        if place.to_dict() not in amenity_places:
                             amenity_places.append(place.to_dict())
         return jsonify(amenity_places)
     else:
