@@ -113,5 +113,5 @@ def search_places():
             for place in places:
                 res.append(place.to_dict())
             return jsonify(res)
-    except json.JSONDecodeError:
+    except ValueError:
         return jsonify({"error": "Not a JSON"}), 400
