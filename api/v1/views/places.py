@@ -7,6 +7,7 @@ from models.state import State
 from models.city import City
 from models.user import User
 from models.place import Place
+from models.amenity import Amenity
 
 
 @app_views.route('/cities/<city_id>/places', strict_slashes=False,
@@ -81,8 +82,16 @@ def search_places():
         places = [value.to_dict() for value in storage.all(Place).values()]
         return jsonify(places)
     if state_ids is None and city_ids is None and amenity_ids is not None:
-        places = [value.to_dict() for value in storage.all(Place).values() if value.id in amenity_ids]
-        return jsonify(places)
+        places = [value for value in storage.all(Place).values()]
+        for ids in amenity_ids:
+            amenity = storage.get(Amenity, ids)
+            for place in places:
+                if amenity not in place.amenities:
+                    places.remove(place)
+        re_places = []
+        for place in places:
+            re_places.append(place.to_dict())
+        return jsonify(re_places)
     else:
         places = []
         if state_ids is not None:
