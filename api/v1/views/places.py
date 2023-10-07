@@ -7,6 +7,7 @@ from models.state import State
 from models.city import City
 from models.user import User
 from models.place import Place
+import json
 
 
 @app_views.route('/cities/<city_id>/places', strict_slashes=False,
@@ -72,44 +73,45 @@ def search_places():
     state_ids = post.get('states', None)
     city_ids = post.get('cities', None)
     amenity_ids = post.get('amenities', None)
-    if type(post) != dict:
-        return jsonify({"error": "Not a JSON"}), 400
-    if not post:
-        places = [value.to_dict() for value in storage.all(Place).values()]
-        return jsonify(places)
-    if state_ids is None and city_ids is None:
-        places = [value for value in storage.all(Place).values()]
-        for ids in amenity_ids:
-            for place in places:
-                if ids != place.id:
-                    places.remove(place)
-        res = []
-        for place in places:
-            res.append(place.to_dict())
-        return jsonify(res)
-    else:
-        places = []
-        if state_ids is not None:
-            for value in state_ids:
-                state = storage.get(State, value)
-                if state is not None:
-                    for city in state.cities:
-                        for place in city.places:
-                            if place.to_dict() not in places:
-                                places.append(place)
-        if city_ids is not None:
-            for value in city_ids:
-                city = storage.get(City, value)
-                if city is not None:
-                    for place in city.places:
-                        if place.to_dict() not in places:
-                            places.append(place)
-        if amenity_ids is not None:
+    try:  
+        if not post:
+            places = [value.to_dict() for value in storage.all(Place).values()]
+            return jsonify(places)
+        if state_ids is None and city_ids is None:
+            places = [value for value in storage.all(Place).values()]
             for ids in amenity_ids:
                 for place in places:
                     if ids != place.id:
                         places.remove(place)
-        res = []
-        for place in places:
-            res.append(place.to_dict())
-        return jsonify(res)
+            res = []
+            for place in places:
+                res.append(place.to_dict())
+            return jsonify(res)
+        else:
+            places = []
+            if state_ids is not None:
+                for value in state_ids:
+                    state = storage.get(State, value)
+                    if state is not None:
+                        for city in state.cities:
+                            for place in city.places:
+                                if place.to_dict() not in places:
+                                    places.append(place)
+            if city_ids is not None:
+                for value in city_ids:
+                    city = storage.get(City, value)
+                    if city is not None:
+                        for place in city.places:
+                            if place.to_dict() not in places:
+                                places.append(place)
+            if amenity_ids is not None:
+                for ids in amenity_ids:
+                    for place in places:
+                        if ids != place.id:
+                            places.remove(place)
+            res = []
+            for place in places:
+                res.append(place.to_dict())
+            return jsonify(res)
+    except json.JSONDecodeError:
+        return jsonify({"error": "Not a JSON"}), 400
