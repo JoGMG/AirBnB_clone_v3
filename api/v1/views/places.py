@@ -69,15 +69,18 @@ def place(place_id):
                  methods=['POST'])
 def search_places():
     post = request.get_json()
+    if post == {}:
+        places = [value.to_dict() for value in storage.all(Place).values()]
+        return jsonify(places)
+    if not post:
+        return jsonify({"error": "Not a JSON"}), 400
     state_ids = post.get('states', None)
     city_ids = post.get('cities', None)
     amenity_ids = post.get('amenities', None)
-    if post is None:
-        return jsonify({"error": "Not a JSON"}), 400
     if state_ids is None and city_ids is None and amenity_ids is None:
         places = [value.to_dict() for value in storage.all(Place).values()]
         return jsonify(places)
-    if state_ids is None and city_ids is None:
+    if state_ids is None and city_ids is None and amenity_ids is not None:
         places = [value for value in storage.all(Place).values()]
         for ids in amenity_ids:
             for place in places:
