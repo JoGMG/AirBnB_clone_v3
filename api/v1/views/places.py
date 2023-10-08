@@ -92,7 +92,8 @@ def search_places():
                     if amenity not in amenities_obj:
                         amenities_obj.append(amenity)
                     for place in storage.all(Place).values():
-                        if len(place.amenities) == len(amenity_ids):
+                        if len(place.amenities) == len(amenity_ids) and \
+                         len(amenities_obj) == len(place.amenities):
                             if set(amenities_obj) == set(place.amenities):
                                 if place.id not in id_places:
                                     id_places.append(place.id)
