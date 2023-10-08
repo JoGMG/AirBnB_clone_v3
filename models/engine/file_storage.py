@@ -71,13 +71,11 @@ class FileStorage:
 
     def get(self, cls, id):
         """returns an instance of a class"""
-        for val in self.all(cls).values():
-            if id == val.id:
-                return val
+        for instance in self.all(cls).values():
+            if instance.id == id:
+                return instance
 
     def count(self, cls=None):
         """returns the number of instances"""
-        count = 0
-        for key in self.all(cls):
-            count += 1
-        return count
+        instances = self.all(cls)
+        return len(instances)
