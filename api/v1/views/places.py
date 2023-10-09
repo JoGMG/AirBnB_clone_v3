@@ -113,22 +113,22 @@ def search_places():
                     for place in city.places:
                         if place not in places:
                             places.append(place)
+
+        re_places = []
         if amenity_ids is None:
-            re_places = []
             for place in places:
                 re_places.append(place.to_dict())
             return jsonify(re_places)
         else:
             amenities_obj = []
+            for ids in amenity_ids:
+                amenity = storage.get(Amenity, ids)
+                if amenity is not None:
+                    if amenity not in amenities_obj:
+                        amenities_obj.append(amenity)
             for place in places:
-                for ids in amenity_ids:
-                    amenity = storage.get(Amenity, ids)
-                    if amenity is not None:
-                        if amenity not in amenities_obj:
-                            amenities_obj.append(amenity)
-                if all(obj not in place.amenities for obj in amenities_obj):
-                    places.remove(place)
-            re_places = []
-            for place in places:
-                re_places.append(place.to_dict())
+                if all(obj in place.amenities for obj in amenities_obj):
+                    re_places.append(place.to_dict())
+            for place in re_places:
+                place.pop('amenities', None)
             return jsonify(re_places)
